@@ -4,9 +4,43 @@
   "description": "Batch file downloader from CSV link lists with live statistics",
   "main": "main.js",
   "scripts": {
-    "start": "electron ."
+    "start": "electron .",
+    "dist": "electron-builder --win",
+    "dist:dir": "electron-builder --win --dir"
+  },
+  "build": {
+    "appId": "com.swisstopo.cvs-links-download",
+    "productName": "CSV Links Downloader",
+    "copyright": "Copyright © 2026",
+    "directories": {
+      "output": "dist"
+    },
+    "files": [
+      "main.js",
+      "preload.js",
+      "renderer.js",
+      "index.html",
+      "styles.css",
+      "package.json"
+    ],
+    "win": {
+      "target": [
+        {
+          "target": "nsis",
+          "arch": ["x64"]
+        }
+      ]
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "CSV Links Downloader"
+    }
   },
   "devDependencies": {
-    "electron": "^29.4.6"
+    "electron": "^29.4.6",
+    "electron-builder": "^26.8.1"
   }
 }
