@@ -620,6 +620,80 @@ folderBrowseBtn.addEventListener('click', async () => {
   checkStartEnabled();
 });
 
+/* ═══════════════════════════════════════════════════════════════════════════════
+   Drag-and-drop
+═══════════════════════════════════════════════════════════════════════════════ */
+async function handleCSVDrop(p) {
+  state.csvPath   = p;
+  csvPathEl.value = p;
+  csvCountEl.classList.add('hidden');
+  const result = await window.electronAPI.parseCSV(p);
+  if (result.ok) {
+    state.urls = result.urls;
+    csvCountEl.textContent = `${result.count} URL${result.count !== 1 ? 's' : ''}`;
+    csvCountEl.classList.remove('hidden');
+  } else {
+    state.urls = [];
+    csvCountEl.textContent = 'Parse error';
+    csvCountEl.classList.remove('hidden');
+  }
+  checkStartEnabled();
+}
+
+const csvInputGroup    = csvPathEl.closest('.setup-input-group');
+const folderInputGroup = folderPathEl.closest('.setup-input-group');
+
+csvInputGroup.addEventListener('dragover', (e) => {
+  e.preventDefault();
+  e.stopPropagation();
+  if (e.dataTransfer.items[0]?.kind === 'file') {
+    e.dataTransfer.dropEffect = 'copy';
+    csvInputGroup.classList.add('drag-over');
+  }
+});
+csvInputGroup.addEventListener('dragleave', (e) => {
+  if (!csvInputGroup.contains(e.relatedTarget)) {
+    csvInputGroup.classList.remove('drag-over');
+  }
+});
+csvInputGroup.addEventListener('drop', async (e) => {
+  e.preventDefault();
+  e.stopPropagation();
+  csvInputGroup.classList.remove('drag-over');
+  const file = e.dataTransfer.files[0];
+  if (!file?.path) return;
+  const ext = file.name.split('.').pop().toLowerCase();
+  if (ext !== 'csv' && ext !== 'txt') return;
+  await handleCSVDrop(file.path);
+});
+
+folderInputGroup.addEventListener('dragover', (e) => {
+  e.preventDefault();
+  e.stopPropagation();
+  const entry = e.dataTransfer.items[0]?.webkitGetAsEntry?.();
+  if (entry?.isDirectory) {
+    e.dataTransfer.dropEffect = 'copy';
+    folderInputGroup.classList.add('drag-over');
+  }
+});
+folderInputGroup.addEventListener('dragleave', (e) => {
+  if (!folderInputGroup.contains(e.relatedTarget)) {
+    folderInputGroup.classList.remove('drag-over');
+  }
+});
+folderInputGroup.addEventListener('drop', (e) => {
+  e.preventDefault();
+  e.stopPropagation();
+  folderInputGroup.classList.remove('drag-over');
+  const entry = e.dataTransfer.items[0]?.webkitGetAsEntry?.();
+  if (!entry?.isDirectory) return;
+  const file = e.dataTransfer.files[0];
+  if (!file?.path) return;
+  state.folderPath   = file.path;
+  folderPathEl.value = file.path;
+  checkStartEnabled();
+});
+
 concSlider.addEventListener('input', () => {
   concVal.textContent = concSlider.value;
 });

@@ -157,6 +157,12 @@ body {
 .setup-input:focus { outline: none; border-color: var(--accent); }
 .setup-input::placeholder { color: var(--text-3); }
 
+.setup-input-group.drag-over .setup-input {
+  border-color: var(--accent);
+  background: var(--accent-dim);
+  color: var(--accent);
+}
+
 .setup-badge {
   display: inline-flex;
   align-items: center;
