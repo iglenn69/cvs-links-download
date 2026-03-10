@@ -1,0 +1,12 @@
+{
+  "name": "cvs-links-download",
+  "version": "1.0.0",
+  "description": "Batch file downloader from CSV link lists with live statistics",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron ."
+  },
+  "devDependencies": {
+    "electron": "^29.4.6"
+  }
+}
