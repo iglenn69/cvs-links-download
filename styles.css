@@ -308,8 +308,6 @@ body {
 }
 
 /* ─── Progress ring ──────────────────────────────────────────────────────────── */
-.panel-progress {}
-
 .progress-ring-area {
   display: flex;
   align-items: center;
