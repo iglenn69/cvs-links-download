@@ -655,6 +655,30 @@ folderBrowseBtn.addEventListener('click', async () => {
   checkStartEnabled();
 });
 
+csvPathEl.addEventListener('change', async () => {
+  const p = csvPathEl.value.trim();
+  state.csvPath = p || null;
+  csvCountEl.classList.add('hidden');
+  if (!p) { state.urls = []; checkStartEnabled(); return; }
+  const result = await window.electronAPI.parseCSV(p);
+  if (result.ok) {
+    state.urls = result.urls;
+    csvCountEl.textContent = `${result.count} URL${result.count !== 1 ? 's' : ''}`;
+    csvCountEl.classList.remove('hidden');
+  } else {
+    state.urls = [];
+    csvCountEl.textContent = 'Parse error';
+    csvCountEl.classList.remove('hidden');
+  }
+  checkStartEnabled();
+});
+
+folderPathEl.addEventListener('change', () => {
+  const p = folderPathEl.value.trim();
+  state.folderPath = p || null;
+  checkStartEnabled();
+});
+
 /* ═══════════════════════════════════════════════════════════════════════════════
    Drag-and-drop
 ═══════════════════════════════════════════════════════════════════════════════ */
