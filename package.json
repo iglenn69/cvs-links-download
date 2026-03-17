@@ -2,6 +2,7 @@
   "name": "cvs-links-download",
   "version": "1.0.0",
   "description": "Batch file downloader from CSV link lists with live statistics",
+  "author": "azureblur",
   "main": "main.js",
   "scripts": {
     "start": "electron .",

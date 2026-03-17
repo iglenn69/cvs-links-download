@@ -11,6 +11,7 @@ const ALLOWED_RECEIVE = [
   'downloads:tick',
   'downloads:done',
   'downloads:cancelled',
+  'app:showAbout',
 ];
 
 contextBridge.exposeInMainWorld('electronAPI', {
@@ -25,6 +26,9 @@ contextBridge.exposeInMainWorld('electronAPI', {
 
   // Shell helpers
   showInFolder: (filePath) => ipcRenderer.invoke('shell:showInFolder', filePath),
+
+  // App info
+  getVersionInfo: () => ipcRenderer.invoke('app:getVersionInfo'),
 
   // Event subscription – returns an unsubscribe function
   on (channel, callback) {

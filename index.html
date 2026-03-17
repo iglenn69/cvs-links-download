@@ -20,6 +20,13 @@
       <span class="header-title">CVS Links Downloader</span>
     </div>
     <div class="header-badges" id="headerBadges"></div>
+    <button id="btnAbout" class="about-btn" title="About CSV Links Downloader" aria-label="About">
+      <svg viewBox="0 0 16 16" fill="none" aria-hidden="true">
+        <circle cx="8" cy="8" r="6.5" stroke="currentColor" stroke-width="1.3"/>
+        <path d="M8 7v5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+        <circle cx="8" cy="4.5" r=".75" fill="currentColor"/>
+      </svg>
+    </button>
   </header>
 
   <!-- ── Setup panel ────────────────────────────────────────── -->
@@ -196,6 +203,77 @@
       </div>
     </div>
   </section>
+
+  <!-- ── About modal ────────────────────────────────────────── -->
+  <div id="aboutOverlay" class="about-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="aboutAppName">
+    <div class="about-dialog">
+      <button id="aboutClose" class="about-close" aria-label="Close">&times;</button>
+
+      <div class="about-hero">
+        <svg class="about-hero-icon" viewBox="0 0 48 48" fill="none" aria-hidden="true">
+          <circle cx="24" cy="24" r="23" stroke="var(--accent)" stroke-width="1.5" opacity=".25"/>
+          <path d="M24 8L24 34M24 34L14 24M24 34L34 24" stroke="var(--accent)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M8 38V42C8 43.1 8.9 44 10 44H38C39.1 44 40 43.1 40 42V38" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" opacity=".7"/>
+        </svg>
+        <div class="about-hero-text">
+          <h1 id="aboutAppName" class="about-app-name">CSV Links Downloader</h1>
+          <div class="about-version" id="aboutVersion">v1.0.0</div>
+        </div>
+      </div>
+
+      <p class="about-description" id="aboutDescription">Batch file downloader from CSV link lists with live statistics.</p>
+
+      <div class="about-meta-grid">
+        <div class="about-meta-row">
+          <span class="about-meta-label">Author</span>
+          <span class="about-meta-value" id="aboutAuthor">—</span>
+        </div>
+        <div class="about-meta-row">
+          <span class="about-meta-label">Build date</span>
+          <span class="about-meta-value" id="aboutBuildDate">—</span>
+        </div>
+        <div class="about-meta-row">
+          <span class="about-meta-label">Electron</span>
+          <span class="about-meta-value mono" id="aboutElectron">—</span>
+        </div>
+        <div class="about-meta-row">
+          <span class="about-meta-label">Node.js</span>
+          <span class="about-meta-value mono" id="aboutNode">—</span>
+        </div>
+        <div class="about-meta-row">
+          <span class="about-meta-label">Chromium</span>
+          <span class="about-meta-value mono" id="aboutChrome">—</span>
+        </div>
+        <div class="about-meta-row">
+          <span class="about-meta-label">Copyright</span>
+          <span class="about-meta-value" id="aboutCopyright">—</span>
+        </div>
+      </div>
+
+      <div class="about-changelog">
+        <h2 class="about-changelog-title">What's new</h2>
+        <ul class="about-changelog-list">
+          <li class="about-changelog-item">
+            <span class="about-cl-badge">v1.0.0</span>
+            <span class="about-cl-date">2026-03-16</span>
+            <ul class="about-cl-notes">
+              <li>Initial release — concurrent download engine (1–16 parallel workers)</li>
+              <li>Live speed chart with 60-second rolling history and auto-scaling Y axis</li>
+              <li>Overall progress ring with animated SVG and per-file row tracking</li>
+              <li>Stats dashboard: Completed, Failed, Active, Queued, Bytes, ETA</li>
+              <li>Retry failed downloads and one-click New Session reset</li>
+              <li>Safe filename extraction with path-traversal protection and de-duplication</li>
+              <li>Redirect following (up to 10 hops, HTTP + HTTPS)</li>
+              <li>Drag-and-drop support for CSV file and destination folder</li>
+              <li>Windows NSIS installer via <code>npm&nbsp;run&nbsp;dist</code></li>
+            </ul>
+          </li>
+        </ul>
+      </div>
+
+      <p class="about-footer" id="aboutFooter">Copyright © 2026</p>
+    </div>
+  </div>
 
   <script src="renderer.js"></script>
 </body>

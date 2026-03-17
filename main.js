@@ -1,6 +1,6 @@
 'use strict';
 
-const { app, BrowserWindow, ipcMain, dialog, shell } = require('electron');
+const { app, BrowserWindow, ipcMain, dialog, shell, Menu } = require('electron');
 const path   = require('path');
 const fs     = require('fs');
 const http   = require('http');
@@ -34,9 +34,49 @@ function createWindow () {
 
 app.whenReady().then(() => {
   createWindow();
+  buildAppMenu();
   app.on('activate', () => { if (!BrowserWindow.getAllWindows().length) createWindow(); });
 });
 app.on('window-all-closed', () => { if (process.platform !== 'darwin') app.quit(); });
+
+// ─── Application menu ─────────────────────────────────────────────────────────
+function buildAppMenu () {
+  const template = [
+    {
+      label: 'File',
+      submenu: [
+        { role: 'quit' },
+      ],
+    },
+    {
+      label: 'Help',
+      submenu: [
+        {
+          label: 'About CSV Links Downloader',
+          click () {
+            if (mainWindow) mainWindow.webContents.send('app:showAbout');
+          },
+        },
+      ],
+    },
+  ];
+  Menu.setApplicationMenu(Menu.buildFromTemplate(template));
+}
+
+// ─── IPC: about info ──────────────────────────────────────────────────────────
+ipcMain.handle('app:getVersionInfo', () => {
+  const pkg = JSON.parse(fs.readFileSync(path.join(__dirname, 'package.json'), 'utf-8'));
+  return {
+    name:        app.getName(),
+    version:     app.getVersion(),
+    description: pkg.description || '',
+    author:      pkg.author      || '—',
+    copyright:   pkg.build?.copyright || `Copyright © ${new Date().getFullYear()}`,
+    electron:    process.versions.electron,
+    node:        process.versions.node,
+    chrome:      process.versions.chrome,
+  };
+});
 
 // ─── Session state ────────────────────────────────────────────────────────────
 let session = null;   // active download session descriptor

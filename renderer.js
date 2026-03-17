@@ -800,3 +800,50 @@ document.querySelectorAll('.filter-btn').forEach(btn => {
 
 /* ─── Init ───────────────────────────────────────────────────────────────────── */
 checkStartEnabled();
+
+/* ═══════════════════════════════════════════════════════════════════════════════
+   About modal
+═══════════════════════════════════════════════════════════════════════════════ */
+const aboutOverlay = document.getElementById('aboutOverlay');
+const aboutClose   = document.getElementById('aboutClose');
+
+async function openAboutModal() {
+  // Populate dynamic fields
+  try {
+    const info = await window.electronAPI.getVersionInfo();
+    document.getElementById('aboutAppName').textContent    = info.name        || 'CSV Links Downloader';
+    document.getElementById('aboutVersion').textContent    = 'v' + (info.version || '1.0.0');
+    document.getElementById('aboutDescription').textContent = info.description || '';
+    document.getElementById('aboutAuthor').textContent     = info.author      || '—';
+    document.getElementById('aboutBuildDate').textContent  = new Date().toISOString().slice(0, 10);
+    document.getElementById('aboutElectron').textContent   = info.electron    || '—';
+    document.getElementById('aboutNode').textContent       = info.node        || '—';
+    document.getElementById('aboutChrome').textContent     = info.chrome      || '—';
+    document.getElementById('aboutCopyright').textContent  = info.copyright   || '—';
+    document.getElementById('aboutFooter').textContent     = info.copyright   || '—';
+  } catch (_) { /* non-fatal */ }
+
+  aboutOverlay.classList.remove('hidden');
+  aboutClose.focus();
+}
+
+function closeAboutModal() {
+  aboutOverlay.classList.add('hidden');
+}
+
+aboutClose.addEventListener('click', closeAboutModal);
+
+aboutOverlay.addEventListener('click', (e) => {
+  if (e.target === aboutOverlay) closeAboutModal();
+});
+
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape' && !aboutOverlay.classList.contains('hidden')) {
+    closeAboutModal();
+  }
+});
+
+document.getElementById('btnAbout').addEventListener('click', openAboutModal);
+
+// Triggered from the Help menu in main process
+window.electronAPI.on('app:showAbout', openAboutModal);
