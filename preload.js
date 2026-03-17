@@ -23,6 +23,9 @@ contextBridge.exposeInMainWorld('electronAPI', {
   startDownloads:  (opts) => ipcRenderer.send('downloads:start',  opts),
   cancelDownloads: ()     => ipcRenderer.send('downloads:cancel'),
 
+  // Shell helpers
+  showInFolder: (filePath) => ipcRenderer.invoke('shell:showInFolder', filePath),
+
   // Event subscription – returns an unsubscribe function
   on (channel, callback) {
     if (!ALLOWED_RECEIVE.includes(channel)) return () => {};

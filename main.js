@@ -1,6 +1,6 @@
 'use strict';
 
-const { app, BrowserWindow, ipcMain, dialog } = require('electron');
+const { app, BrowserWindow, ipcMain, dialog, shell } = require('electron');
 const path   = require('path');
 const fs     = require('fs');
 const http   = require('http');
@@ -275,6 +275,7 @@ function downloadOne (idx, url, destFolder) {
         emit('file:done', {
           idx,
           filename: path.basename(tmpPath || ''),
+          filePath: tmpPath || '',
           size:     downloaded,
           elapsed:  Date.now() - fileStart,
         });
@@ -436,6 +437,11 @@ function getUniqueFilename (destFolder, filename) {
   session.usedFilenames.add(candidate);
   return candidate;
 }
+
+// ─── IPC: shell helpers ──────────────────────────────────────────────────────
+ipcMain.handle('shell:showInFolder', (_e, filePath) => {
+  shell.showItemInFolder(filePath);
+});
 
 // ─── IPC emit helper ──────────────────────────────────────────────────────────
 /**

@@ -269,6 +269,39 @@ const fileListEmpty   = document.getElementById('fileListEmpty');
 // Ring circumference (r=52 → 2π·52 ≈ 326.73)
 const RING_CIRC = 2 * Math.PI * 52;
 
+// Context menu
+const ctxMenu = document.createElement('div');
+ctxMenu.id = 'fileContextMenu';
+ctxMenu.className = 'ctx-menu hidden';
+ctxMenu.innerHTML = '<button class="ctx-menu-item" id="ctxShowInFolder">📂 Show in Folder</button>';
+document.body.appendChild(ctxMenu);
+
+let ctxMenuTargetFilePath = null;
+
+function showCtxMenu(x, y, filePath) {
+  ctxMenuTargetFilePath = filePath;
+  ctxMenu.style.left = x + 'px';
+  ctxMenu.style.top  = y + 'px';
+  ctxMenu.classList.remove('hidden');
+  // Reposition if it overflows the viewport
+  const rect = ctxMenu.getBoundingClientRect();
+  if (rect.right  > window.innerWidth)  ctxMenu.style.left = (x - rect.width)  + 'px';
+  if (rect.bottom > window.innerHeight) ctxMenu.style.top  = (y - rect.height) + 'px';
+}
+
+function hideCtxMenu() {
+  ctxMenu.classList.add('hidden');
+  ctxMenuTargetFilePath = null;
+}
+
+document.getElementById('ctxShowInFolder').addEventListener('click', () => {
+  if (ctxMenuTargetFilePath) window.electronAPI.showInFolder(ctxMenuTargetFilePath);
+  hideCtxMenu();
+});
+
+document.addEventListener('click',  hideCtxMenu);
+document.addEventListener('keydown', e => { if (e.key === 'Escape') hideCtxMenu(); });
+
 // Chart
 const chart = new SpeedChart(document.getElementById('speedChart'));
 
@@ -439,7 +472,9 @@ function subscribeIPC() {
       });
     }),
 
-    window.electronAPI.on('file:done', ({ idx, filename, size, elapsed }) => {
+    window.electronAPI.on('file:done', ({ idx, filename, filePath, size, elapsed }) => {
+      const refs = rowCache.get(idx);
+      if (refs) refs.filePath = filePath;
       scheduleRowUpdate(idx, {
         status:     'done',
         filename,
@@ -696,6 +731,17 @@ folderInputGroup.addEventListener('drop', (e) => {
 
 concSlider.addEventListener('input', () => {
   concVal.textContent = concSlider.value;
+});
+
+// Right-click on a completed file row → show context menu
+fileListEl.addEventListener('contextmenu', (e) => {
+  const row = e.target.closest('.file-row');
+  if (!row || row.dataset.status !== 'done') return;
+  const idx = parseInt(row.dataset.idx, 10);
+  const refs = rowCache.get(idx);
+  if (!refs || !refs.filePath) return;
+  e.preventDefault();
+  showCtxMenu(e.clientX, e.clientY, refs.filePath);
 });
 
 btnStart.addEventListener('click', () => {
